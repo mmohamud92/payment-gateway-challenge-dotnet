@@ -1,17 +1,25 @@
-using PaymentGateway.Api.Services;
+using PaymentGateway.Api.Middleware;
+using PaymentGateway.Application;
+using PaymentGateway.Application.DependencyInjections;
+using PaymentGateway.Infrastructure.DependencyInjections;
+using PaymentGateway.Infrastructure.Settings;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration.AddJsonFile("appsettings.json", true, true);
+builder.Configuration.AddTestConfiguration();
 
 // Add services to the container.
+IServiceCollection services = builder.Services;
+services.AddInfrastructureServices(builder.Configuration);
+services.AddApplicationServices();
 
-builder.Services.AddControllers();
+services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+services.AddEndpointsApiExplorer();
+services.AddSwaggerGen();
 
-builder.Services.AddSingleton<PaymentsRepository>();
-
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -20,10 +28,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
+
+public partial class Program
+{
+}
