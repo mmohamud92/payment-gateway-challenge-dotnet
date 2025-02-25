@@ -11,12 +11,15 @@
 - [Prerequisites](#prerequisites)
 - [Configuration](#configuration)
 - [Running the Application](#running-the-application)
+- [Authentication](#authentication)
+- [Using Swagger](#using-swagger)
+- [Using Postman](#using-postman)
 - [Testing](#testing)
   - [Unit & Integration Tests](#unit--integration-tests)
   - [End-to-End Tests](#end-to-end-tests)
-- [Using Postman](#using-postman)
-- [Contributing](#contributing)
-- [License](#license)
+- [Assumptions](#assumptions)
+- [Improvements](#improvements)
+
 
 ---
 
