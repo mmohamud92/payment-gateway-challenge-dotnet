@@ -48,15 +48,17 @@ public static class AuthExtensions
 
     public static IServiceCollection AddCustomAuthorisationPolicies(this IServiceCollection services)
     {
-        services.AddAuthorizationBuilder()
-            .AddPolicy(Constants.Policies.PaymentReadPolicy, policy =>
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy(Constants.Policies.PaymentReadPolicy, policy =>
             {
                 policy.RequireClaim("scope", Constants.ApiScopes.PaymentReadScope);
-            })
-            .AddPolicy(Constants.Policies.PaymentWritePolicy, policy =>
+            });
+            options.AddPolicy(Constants.Policies.PaymentWritePolicy, policy =>
             {
                 policy.RequireClaim("scope", Constants.ApiScopes.PaymentWriteScope);
             });
+        });
         return services;
     }
 }

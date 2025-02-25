@@ -3,7 +3,8 @@ using PaymentGateway.Domain.Exceptions;
 
 namespace PaymentGateway.Domain.UnitTests.Entities;
 
-public class CVVTests
+[Trait("Category", "Unit")]
+public class CvvTests
 {
     [Theory]
     [InlineData("123")]

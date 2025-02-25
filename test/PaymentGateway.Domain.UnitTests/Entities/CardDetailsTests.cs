@@ -2,6 +2,7 @@ using PaymentGateway.Domain.Entities;
 
 namespace PaymentGateway.Domain.UnitTests.Entities;
 
+[Trait("Category", "Unit")]
 public class CardDetailsTests
 {
     private const string CardNumber = "1234567890123456";

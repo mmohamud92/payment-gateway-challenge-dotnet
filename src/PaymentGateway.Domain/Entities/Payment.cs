@@ -1,5 +1,3 @@
-using System;
-
 using PaymentGateway.Domain.Enums;
 
 namespace PaymentGateway.Domain.Entities;

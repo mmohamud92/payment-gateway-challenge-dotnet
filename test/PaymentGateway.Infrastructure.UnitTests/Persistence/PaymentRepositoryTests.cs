@@ -8,11 +8,9 @@ using PaymentGateway.Infrastructure.Persistence;
 
 namespace PaymentGateway.Infrastructure.UnitTests.Persistence;
 
+[Trait("Category", "Unit")]
 public class PaymentRepositoryTests
 {
-    private readonly int _validMonth = DateTime.UtcNow.Month;
-    private readonly int _validYear = DateTime.UtcNow.Year + 1;
-
     private readonly IPaymentRepository _paymentRepository;
 
     public PaymentRepositoryTests()
@@ -149,10 +147,10 @@ public class PaymentRepositoryTests
     private static Payment CreateValidPayment()
     {
         Guid merchantId = Guid.NewGuid();
-        string validCardNumber = "4111111111111111"; // Example valid card number
-        int amount = 100000;
-        string currency = "GBP";
-        string cvv = "123";
+        const string validCardNumber = "4111111111111111"; // Example valid card number
+        const int amount = 100000;
+        const string currency = "GBP";
+        const string cvv = "123";
         int validMonth = DateTime.UtcNow.Month;
         int validYear = DateTime.UtcNow.Year + 1;
 

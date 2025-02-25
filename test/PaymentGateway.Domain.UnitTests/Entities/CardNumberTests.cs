@@ -3,6 +3,7 @@ using PaymentGateway.Domain.Exceptions;
 
 namespace PaymentGateway.Domain.UnitTests.Entities;
 
+[Trait("Category", "Unit")]
 public class CardNumberTests
 {
     [Theory]

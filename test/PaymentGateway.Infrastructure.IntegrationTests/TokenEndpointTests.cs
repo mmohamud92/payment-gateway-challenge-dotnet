@@ -6,6 +6,7 @@ using Newtonsoft.Json.Linq;
 
 namespace PaymentGateway.Infrastructure.IntegrationTests;
 
+[Trait("Category", "Integration")]
 public class TokenEndpointTests(WebApplicationFactory<Program> factory) : IClassFixture<WebApplicationFactory<Program>>
 {
     private readonly HttpClient _client = factory.CreateClient();

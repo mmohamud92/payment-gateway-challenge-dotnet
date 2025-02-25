@@ -14,6 +14,7 @@ using PaymentGateway.Infrastructure.Persistence;
 
 namespace PaymentGateway.Application.IntegrationTests;
 
+[Trait("Category", "Integration")]
 public class ProcessPaymentHandlerIntegrationTests
 {
     private readonly IMapper _mapper;

@@ -3,6 +3,7 @@ using PaymentGateway.Domain.Exceptions;
 
 namespace PaymentGateway.Domain.UnitTests.Entities;
 
+[Trait("Category", "Unit")]
 public class ExpiryDateTests
 {
     [Theory]
@@ -12,24 +13,25 @@ public class ExpiryDateTests
     public void Constructor_WithValidDate_ShouldInitialiseCorrectly(int month)
     {
         // Arrange
-        var year = DateTime.UtcNow.Year + 1;
-        
+        int year = DateTime.UtcNow.Year + 1;
+
         //Act
-        var expiryDate = new ExpiryDate(month, year);
-        
+        ExpiryDate expiryDate = new(month, year);
+
         // Assert
         Assert.Equal(year, expiryDate.Year);
         Assert.Equal(month, expiryDate.Month);
     }
-    
+
     [Fact]
     public void Constructor_WithExpiredYear_ShouldThrowInvalidExpiryDateException()
     {
         // Arrange
-        var invalidExpiryYear = DateTime.UtcNow.Year - 1;
-        
+        int invalidExpiryYear = DateTime.UtcNow.Year - 1;
+
         // Act & Assert
-        var exception = Assert.Throws<InvalidExpiryDateException>(() => new ExpiryDate(12, invalidExpiryYear));
+        InvalidExpiryDateException exception =
+            Assert.Throws<InvalidExpiryDateException>(() => new ExpiryDate(12, invalidExpiryYear));
         Assert.Contains("The expiry date must be in the future.", exception.Message);
     }
 
@@ -37,11 +39,12 @@ public class ExpiryDateTests
     public void Constructor_WithCurrentYearAndExpiredMonth_ShouldThrowInvalidExpiryDateException()
     {
         // Arrange
-        var expiryYear = DateTime.UtcNow.Year;
-        var invalidExpiryMonth = DateTime.UtcNow.Month - 1;
-        
+        int expiryYear = DateTime.UtcNow.Year;
+        int invalidExpiryMonth = DateTime.UtcNow.Month - 1;
+
         // Act & Assert
-        var exception = Assert.Throws<InvalidExpiryDateException>(() => new ExpiryDate(invalidExpiryMonth, expiryYear));
+        InvalidExpiryDateException exception =
+            Assert.Throws<InvalidExpiryDateException>(() => new ExpiryDate(invalidExpiryMonth, expiryYear));
         Assert.Contains("The expiry date must be in the future.", exception.Message);
     }
 
@@ -51,10 +54,11 @@ public class ExpiryDateTests
     public void Constructor_WithInvalidExpiryMonth_ShouldThrowInvalidExpiryDateException(int invalidExpiryMonth)
     {
         // Arrange
-        var expiryYear = DateTime.UtcNow.Year + 1;
-        
+        int expiryYear = DateTime.UtcNow.Year + 1;
+
         // Act & Assert
-        var exception = Assert.Throws<InvalidExpiryDateException>(() => new ExpiryDate(invalidExpiryMonth, expiryYear));
+        InvalidExpiryDateException exception =
+            Assert.Throws<InvalidExpiryDateException>(() => new ExpiryDate(invalidExpiryMonth, expiryYear));
         Assert.Contains("The expiry month must be between 1 and 12.", exception.Message);
     }
 }

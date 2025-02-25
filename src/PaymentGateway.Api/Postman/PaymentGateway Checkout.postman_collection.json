@@ -1,0 +1,139 @@
+{
+	"info": {
+		"_postman_id": "19867537-c480-42f2-a92e-641741791703",
+		"name": "PaymentGateway Checkout",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24135718"
+	},
+	"item": [
+		{
+			"name": "Get Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData = pm.response.json();",
+							"",
+							"// Extract the access_token property and save it as \"bearerToken\"",
+							"if (jsonData.access_token) {",
+							"    pm.environment.set(\"bearerToken\", jsonData.access_token);",
+							"    console.log(\"Bearer token set:\");",
+							"} else {",
+							"    console.error(\"Access token not found in response.\");",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text"
+						},
+						{
+							"key": "username",
+							"value": "{{userName}}",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "{{password}}",
+							"type": "text"
+						},
+						{
+							"key": "scope",
+							"value": "",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{hostUrl}}/connect/token",
+					"host": [
+						"{{hostUrl}}"
+					],
+					"path": [
+						"connect",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Process Payment",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{bearerToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"CardNumber\": \"2222405343248877\",\n  \"ExpiryMonth\": \"04\",\n  \"ExpiryYear\": \"2025\",\n  \"Currency\": \"GBP\",\n  \"Amount\": 100,\n  \"Cvv\": \"123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hostUrl}}/api/payments",
+					"host": [
+						"{{hostUrl}}"
+					],
+					"path": [
+						"api",
+						"payments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Payment",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{bearerToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{hostUrl}}/api/payments/insertPaymentIdHere",
+					"host": [
+						"{{hostUrl}}"
+					],
+					"path": [
+						"api",
+						"payments",
+						"insertPaymentIdHere"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

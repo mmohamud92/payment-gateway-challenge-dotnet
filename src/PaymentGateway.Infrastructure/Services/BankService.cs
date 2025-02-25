@@ -1,10 +1,8 @@
-using System.Net;
 using System.Text;
 using System.Text.Json;
 
 using PaymentGateway.Application.DTOs;
 using PaymentGateway.Application.Interfaces;
-using PaymentGateway.Domain.Exceptions;
 
 namespace PaymentGateway.Infrastructure.Services;
 

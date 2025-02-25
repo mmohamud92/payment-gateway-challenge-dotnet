@@ -1,5 +1,5 @@
 using PaymentGateway.Api.Middleware;
-using PaymentGateway.Application;
+using PaymentGateway.Api.SwaggerDocumentation;
 using PaymentGateway.Application.DependencyInjections;
 using PaymentGateway.Infrastructure.DependencyInjections;
 using PaymentGateway.Infrastructure.Settings;
@@ -13,11 +13,12 @@ builder.Configuration.AddTestConfiguration();
 IServiceCollection services = builder.Services;
 services.AddInfrastructureServices(builder.Configuration);
 services.AddApplicationServices();
+services.AddOpenApi();
 
 services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 services.AddEndpointsApiExplorer();
-services.AddSwaggerGen();
+services.AddSwagger();
 
 WebApplication app = builder.Build();
 
@@ -26,6 +27,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.MapOpenApi();
 }
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();

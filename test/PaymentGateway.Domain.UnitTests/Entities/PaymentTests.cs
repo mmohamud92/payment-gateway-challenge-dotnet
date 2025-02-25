@@ -3,6 +3,7 @@ using PaymentGateway.Domain.Enums;
 
 namespace PaymentGateway.Domain.UnitTests.Entities;
 
+[Trait("Category", "Unit")]
 public class PaymentTests
 {
     private readonly int _validMonth = DateTime.UtcNow.Month;

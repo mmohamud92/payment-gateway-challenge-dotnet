@@ -3,6 +3,7 @@ using PaymentGateway.Domain.Enums;
 
 namespace PaymentGateway.Domain.UnitTests.Entities;
 
+[Trait("Category", "Unit")]
 public class DenominationTests
 {
     [Theory]

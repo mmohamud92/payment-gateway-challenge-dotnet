@@ -9,6 +9,7 @@ using PaymentGateway.Infrastructure;
 
 namespace PaymentGateway.Api.E2ETests;
 
+[Trait("Category", "E2E")]
 public class PaymentFlowE2ETests(EndToEndTestFixture fixture) : IClassFixture<EndToEndTestFixture>
 {
     private readonly HttpClient _client = fixture.Client!;
@@ -19,7 +20,6 @@ public class PaymentFlowE2ETests(EndToEndTestFixture fixture) : IClassFixture<En
         string? writeToken = await GetAccessTokenAsync(Constants.ApiScopes.PaymentWriteScope);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", writeToken);
 
-        // STEP 2: POST a payment
         var paymentRequest = new
         {
             CardNumber = "4111111111111111",
@@ -39,11 +39,9 @@ public class PaymentFlowE2ETests(EndToEndTestFixture fixture) : IClassFixture<En
             postResponseJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         Assert.NotNull(createdPayment);
 
-        // STEP 3: Get a token with read scope
         string? readToken = await GetAccessTokenAsync(Constants.ApiScopes.PaymentReadScope);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", readToken);
 
-        // STEP 4: GET the payment by its Id
         HttpResponseMessage getResponse = await _client.GetAsync($"/api/payments/{createdPayment.Id}");
         Assert.Equal(HttpStatusCode.OK, getResponse.StatusCode);
 

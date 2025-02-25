@@ -8,6 +8,7 @@ using PaymentGateway.Infrastructure.UnitTests.Helpers;
 
 namespace PaymentGateway.Infrastructure.UnitTests.Services;
 
+[Trait("Category", "Unit")]
 public class BankServiceTests
 {
     [Fact]
