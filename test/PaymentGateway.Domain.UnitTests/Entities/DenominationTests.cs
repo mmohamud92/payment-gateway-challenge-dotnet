@@ -1,5 +1,6 @@
 using PaymentGateway.Domain.Entities;
 using PaymentGateway.Domain.Enums;
+using PaymentGateway.Domain.Exceptions;
 
 namespace PaymentGateway.Domain.UnitTests.Entities;
 
@@ -33,10 +34,10 @@ public class DenominationTests
     }
 
     [Fact]
-    public void Constructor_WithNegativeAmount_ShouldThrowArgumentException()
+    public void Constructor_WithNegativeAmount_ShouldThrowPaymentValidationException()
     {
         // Act & Assert
-        ArgumentException exception = Assert.Throws<ArgumentException>(
+        PaymentValidationException exception = Assert.Throws<PaymentValidationException>(
             () => new Denomination(-10, "USD"));
 
         Assert.Contains("Amount cannot be negative.", exception.Message);
@@ -47,10 +48,10 @@ public class DenominationTests
     [InlineData("123")]
     [InlineData("")]
     [InlineData("usdollar")]
-    public void Constructor_WithInvalidCurrency_ShouldThrowArgumentException(string invalidCurrency)
+    public void Constructor_WithInvalidCurrency_ShouldThrowPaymentValidationException(string invalidCurrency)
     {
         // Act & Assert
-        ArgumentException exception = Assert.Throws<ArgumentException>(
+        PaymentValidationException exception = Assert.Throws<PaymentValidationException>(
             () => new Denomination(100, invalidCurrency));
 
         Assert.Contains($"Invalid currency code: {invalidCurrency}", exception.Message);

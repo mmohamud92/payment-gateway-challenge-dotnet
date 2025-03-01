@@ -1,4 +1,5 @@
 using PaymentGateway.Domain.Enums;
+using PaymentGateway.Domain.Exceptions;
 
 namespace PaymentGateway.Domain.Entities;
 
@@ -27,12 +28,12 @@ public class Payment
     /// <param name="currency">The currency code (e.g., "USD").</param>
     /// <param name="cvv">The card's CVV (validated for proper format).</param>
     /// <exception cref="ArgumentException">Thrown when inputs are invalid.</exception>
-    public Payment(Guid merchantId, string cardNumber, int expiryMonth, int expiryYear, int amount, string currency,
+    public Payment(Guid merchantId, string cardNumber, string expiryMonth, string expiryYear, int amount, string currency,
         string cvv)
     {
         if (merchantId == Guid.Empty)
         {
-            throw new ArgumentException("Merchant ID is required.", nameof(merchantId));
+            throw new PaymentValidationException("Merchant ID is required.");
         }
 
         Denomination = new Denomination(amount, currency);
@@ -57,23 +58,24 @@ public class Payment
     /// <exception cref="InvalidOperationException">Thrown if the transition is not allowed.</exception>
     public void UpdateStatus(PaymentStatus newStatus)
     {
-        switch (newStatus)
+        if (newStatus == Status)
         {
-            case var _ when newStatus == Status:
-                throw new InvalidOperationException("Payment status is already set to this value.");
+            throw new InvalidOperationException("Payment status is already set to this value.");
+        }
 
-            case PaymentStatus.Authorised when Status != PaymentStatus.Pending:
-            case PaymentStatus.Declined when Status != PaymentStatus.Pending:
-                throw new InvalidOperationException("Only payments in the Pending state can be updated.");
+        if (Status != PaymentStatus.Pending)
+        {
+            throw new InvalidOperationException("Only payments in the Pending state can be updated.");
+        }
 
-            case PaymentStatus.Authorised:
-            case PaymentStatus.Declined:
-                Status = newStatus;
-                break;
-
-            default:
-                throw new InvalidOperationException(
-                    "Invalid status transition. Payments can only transition from Pending to Authorised or Declined.");
+        if (newStatus is PaymentStatus.Authorised or PaymentStatus.Declined or PaymentStatus.Rejected)
+        {
+            Status = newStatus;
+        }
+        else
+        {
+            throw new InvalidOperationException(
+                "Invalid status transition. Payments can only transition from Pending to Authorised or Declined.");
         }
     }
 

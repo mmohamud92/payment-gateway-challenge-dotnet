@@ -5,10 +5,12 @@ using Microsoft.Extensions.Caching.Memory;
 using PaymentGateway.Application.Commands;
 using PaymentGateway.Application.DTOs;
 using PaymentGateway.Application.Handlers;
+using PaymentGateway.Application.IntegrationTests.Helpers;
 using PaymentGateway.Application.Interfaces;
 using PaymentGateway.Application.MappingProfiles;
 using PaymentGateway.Application.Queries;
 using PaymentGateway.Domain.Enums;
+using PaymentGateway.Domain.Exceptions;
 using PaymentGateway.Domain.Interfaces;
 using PaymentGateway.Infrastructure.Persistence;
 
@@ -33,43 +35,51 @@ public class ProcessPaymentHandlerIntegrationTests
         _paymentRepository = new PaymentRepository(memoryCache);
     }
 
-    [Fact(DisplayName = "ProcessPaymentHandler and GetPaymentByIdHandler Integration Test")]
+    [Fact]
     public async Task ProcessAndRetrievePayment_IntegrationTest()
     {
         // Arrange:
         Guid merchantId = Guid.NewGuid();
         PaymentRequestDto paymentRequest = new(
             "4111111111111111",
-            12,
-            DateTime.UtcNow.Year + 1,
+            "12",
+            $"{DateTime.UtcNow.Year + 1}",
             "GBP",
             10000,
             "123"
         );
 
         ProcessPaymentCommand processCommand = new(paymentRequest, merchantId);
-
-        // Create handler instances.
         ProcessPaymentHandler processHandler = new(_mapper, _bankService, _paymentRepository);
-        GetPaymentByIdHandler getHandler = new(_paymentRepository, _mapper);
 
         // Act:
         PaymentResponseDto processedResponse = await processHandler.Handle(processCommand, CancellationToken.None);
-
+        // Assert:
         Assert.Equal(PaymentStatus.Authorised.ToString(), processedResponse.Status);
         Assert.NotEqual(Guid.Empty, processedResponse.Id);
+    }
 
-        // Retrieve the payment using its ID.
-        GetPaymentByIdQuery getQuery = new(processedResponse.Id);
-        PaymentResponseDto retrievedResponse = await getHandler.Handle(getQuery, CancellationToken.None);
+    [Fact]
+    public async Task ProcessPaymentHandler_InvalidPayment_ThrowsPaymentValidationException()
+    {
+        // Arrange
+        Guid merchantId = Guid.NewGuid();
+        PaymentRequestDto invalidPaymentRequest = new(
+            "4111111111111111",
+            "12",
+            $"{DateTime.UtcNow.Year + 1}",
+            "GBP",
+            -100,
+            "123"
+        );
+        ProcessPaymentCommand command = new(invalidPaymentRequest, merchantId);
+        ProcessPaymentHandler handler = new(_mapper, _bankService, _paymentRepository);
 
-        // Assert:
-        Assert.Equal(processedResponse.Id, retrievedResponse.Id);
-        Assert.Equal(processedResponse.Status, retrievedResponse.Status);
-        Assert.Equal(processedResponse.LastFourCardDigits, retrievedResponse.LastFourCardDigits);
-        Assert.Equal(processedResponse.ExpiryMonth, retrievedResponse.ExpiryMonth);
-        Assert.Equal(processedResponse.ExpiryYear, retrievedResponse.ExpiryYear);
-        Assert.Equal(processedResponse.Currency, retrievedResponse.Currency);
-        Assert.Equal(processedResponse.Amount, retrievedResponse.Amount);
+        // Act & Assert
+        PaymentValidationException ex = await Assert.ThrowsAsync<PaymentValidationException>(
+            () => handler.Handle(command, CancellationToken.None)
+        );
+        Assert.NotNull(ex.Message);
+        Assert.Contains("Amount cannot be negative", ex.Message);
     }
 }

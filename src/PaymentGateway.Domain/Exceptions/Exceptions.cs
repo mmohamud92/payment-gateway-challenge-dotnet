@@ -24,3 +24,8 @@ public class InvalidExpiryDateException(string message) : Exception(message);
 /// Exception thrown when the requested payment is not found
 /// </summary>
 public class PaymentNotFoundException(string message) : Exception(message);
+
+/// <summary>
+/// Exception there is an issue with the payment
+/// </summary>
+public class PaymentValidationException(string message) : Exception(message);

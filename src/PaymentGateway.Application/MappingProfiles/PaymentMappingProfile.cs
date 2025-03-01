@@ -12,7 +12,7 @@ public class PaymentMappingProfile : Profile
         CreateMap<Payment, BankPaymentRequestDto>()
             .ConstructUsing(src => new BankPaymentRequestDto(
                 src.CardDetails.CardNumber.Value,
-                $"{src.CardDetails.ExpiryDate.Month}/{src.CardDetails.ExpiryDate.Year}",
+                $"{src.CardDetails.ExpiryDate.PaddedMonth}/{src.CardDetails.ExpiryDate.Year}",
                 src.Denomination.Currency.ToString(),
                 src.Denomination.Amount,
                 src.CardDetails.Cvv.Value
@@ -23,8 +23,8 @@ public class PaymentMappingProfile : Profile
                 src.Id,
                 src.Status.ToString(),
                 src.LastFourDigits,
-                src.CardDetails.ExpiryDate.Month,
-                src.CardDetails.ExpiryDate.Year,
+                $"{src.CardDetails.ExpiryDate.Month}",
+                $"{src.CardDetails.ExpiryDate.Year}",
                 src.Denomination.Currency.ToString(),
                 src.Denomination.Amount
             ));

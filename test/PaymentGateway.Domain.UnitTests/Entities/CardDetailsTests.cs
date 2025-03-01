@@ -6,9 +6,9 @@ namespace PaymentGateway.Domain.UnitTests.Entities;
 public class CardDetailsTests
 {
     private const string CardNumber = "1234567890123456";
-    private const string CVV = "1234";
-    private const int ExpiryMonth = 12;
-    private readonly int _expiryYear = DateTime.UtcNow.Year + 1;
+    private const string Cvv = "1234";
+    private const string ExpiryMonth = "12";
+    private readonly string _expiryYear = $"{DateTime.UtcNow.Year + 1}";
 
     [Fact]
     public void Constructor_WithValidInputs_ShouldInitializeCorrectly()
@@ -16,7 +16,7 @@ public class CardDetailsTests
         // Arrange
         CardNumber cardNumber = new(CardNumber);
         ExpiryDate expiryDate = new(ExpiryMonth, _expiryYear);
-        Cvv cvv = new(CVV);
+        Cvv cvv = new(Cvv);
 
         // Act
         CardDetails cardDetails = new(cardNumber, expiryDate, cvv);
@@ -32,7 +32,7 @@ public class CardDetailsTests
     {
         // Arrange
         ExpiryDate expiryDate = new(ExpiryMonth, _expiryYear);
-        Cvv cvv = new(CVV);
+        Cvv cvv = new(Cvv);
 
         // Act & Assert
         Assert.Throws<ArgumentNullException>(() => new CardDetails(null, expiryDate, cvv));
@@ -43,7 +43,7 @@ public class CardDetailsTests
     {
         // Arrange
         CardNumber cardNumber = new(CardNumber);
-        Cvv cvv = new(CVV);
+        Cvv cvv = new(Cvv);
 
         // Act & Assert
         Assert.Throws<ArgumentNullException>(() => new CardDetails(cardNumber, null, cvv));

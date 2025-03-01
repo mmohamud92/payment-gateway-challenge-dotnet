@@ -1,7 +1,7 @@
 ﻿using PaymentGateway.Application.DTOs;
 using PaymentGateway.Application.Interfaces;
 
-namespace PaymentGateway.Application.IntegrationTests;
+namespace PaymentGateway.Application.IntegrationTests.Helpers;
 
 public class FakeBankService : IBankService
 {
