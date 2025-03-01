@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -28,20 +29,20 @@ public class EndToEndTestFixture : WebApplicationFactory<Program>, IAsyncLifetim
             // Override the JWT Bearer options for tests.
             services.PostConfigure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
             {
-                options.RequireHttpsMetadata = false;
+                JwtSecurityTokenHandler tokenHandler = new();
 
+                options.RequireHttpsMetadata = false;
+                options.TokenHandlers.Clear();
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateAudience = false,
                     ValidateIssuer = false,
+                    ValidateAudience = false,
                     ValidateLifetime = false,
-                    ValidateIssuerSigningKey = false
+                    ValidateIssuerSigningKey = false,
+                    SignatureValidator = (token, parameters) => new JwtSecurityToken(token)
                 };
 
-                // For .NET 8, enable use of SecurityTokenValidators.
-                options.UseSecurityTokenValidators = true;
-                options.SecurityTokenValidators.Clear();
-                options.SecurityTokenValidators.Add(new DummyTokenValidator());
+                options.TokenHandlers.Add(tokenHandler);
 
                 options.Events = new JwtBearerEvents
                 {

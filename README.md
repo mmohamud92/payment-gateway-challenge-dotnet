@@ -34,7 +34,7 @@ The obligatory picture of the DDD Onion:
 Key features include:
 
 - **Domain Layer:**  
-  Contains business entities (e.g., `Payment`, `CardDetails`), value objects (`CardNumber`, `ExpiryDate`, `Cvv`), enums (`Currency`, `PaymentStatus`), exceptions, interfaces, and validation logic.
+  Contains business entities (e.g., `Payment`), value objects (`CardNumber`, `ExpiryDate`, `Cvv`), enums (`Currency`, `PaymentStatus`), exceptions, interfaces, and validation logic.
   
 - **Infrastructure Layer:**  
   Implements authentication using JWT and OpenIddict, dependency injection, and a simple in-memory persistence layer (via IMemoryCache) for storing payments. It also includes a simulated bank service integration.
@@ -60,12 +60,12 @@ Key features include:
   - Contains settings classes for configuring bank service endpoints and authentication parameters.
 
 - **PaymentGateway.Application**  
-  - Contains DTOs, commands (e.g., `ProcessPaymentCommand`), queries (e.g., `GetPaymentByIdQuery`), handlers (e.g., `ProcessPaymentHandler` and `GetPaymentByIdHandler`), mapping profiles, and MediatR integration.
+  - Contains DTOs, commands (e.g. `ProcessPaymentCommand`), queries (e.g. `GetPaymentByIdQuery`), handlers (e.g. `ProcessPaymentHandler` and `GetPaymentByIdHandler`), mapping profiles, and MediatR integration.
   
 - **PaymentGateway.Api**  
   - The Web API project exposing endpoints to process and retrieve payments.
-  - Contains controllers (e.g., `PaymentsWriteController` and `PaymentsReadController`) and middleware for exception handling.
-  - Configuration is managed via `appsettings.json` and `appsettings.Test.json`, with launch settings specifying multiple URLs.
+  - Contains controllers (e.g. `PaymentsWriteController` and `PaymentsReadController`) and middleware for exception handling.
+  - Configuration is managed via `appsettings.json`, with launch settings specifying multiple URLs.
 
 ---
 
@@ -73,7 +73,7 @@ Key features include:
 
 - [.NET 6 or later](https://dotnet.microsoft.com/download)
 - [Docker & Docker Compose](https://docs.docker.com/get-docker/) – for running the bank simulator
-- An IDE like [Rider](https://www.jetbrains.com/rider/), [Visual Studio](https://visualstudio.microsoft.com/) or [VS Code](https://code.visualstudio.com/)
+- (**Optional**) An IDE like [Rider](https://www.jetbrains.com/rider/), [Visual Studio](https://visualstudio.microsoft.com/) or [VS Code](https://code.visualstudio.com/)
 
 ---
 
@@ -112,7 +112,7 @@ You can run the API project (PaymentGateway.Api) from your IDE or via the comman
 The application will listen on the URLs specified in the launch settings.
 
 2. **Run the API:** 
-If running in Development, navigate to `https://localhost:7092/swagger` to explore the API endpoints.
+If running in Development, navigate to `https://your.endpoint/swagger` to explore the API endpoints.
 
 ## Authentication
 
@@ -121,13 +121,13 @@ The PaymentGateway API uses JWT tokens for both authentication and authorisation
 
 For example, to request a token you can issue an HTTP POST to:
 
-`https://localhost:7092/connect/token`
+`https://your.endpoint/connect/token`
 
 This endpoint supports the resource owner password grant, so you can provide credentials (username and password can be found [here](./src/PaymentGateway.Api/Postman/)) along with the required scope(s). The returned token contains claims including the `merchantId`, which is then used by the API to identify the merchant making the request.
 
 You can also view additional details about the authentication configuration and metadata by visiting the OpenID Connect discovery endpoint:
 
-`https://localhost:7092/.well-known/openid-configuration`
+`https://your.endpoint/.well-known/openid-configuration`
 
 
 This endpoint provides information on available endpoints, signing keys, and other configuration details.
@@ -136,7 +136,7 @@ Since the `merchantId` is provided within the API token, you are required to fir
 
 ## Using Swagger
 
-When you run the application, the Swagger UI will open, allowing you to interact with the API for processing and retrieving payments. Use the Authorize button to obtain the necessary API token. The required username and password are provided in [this Postman Environment file](./src/PaymentGateway.Api/Postman/PaymentGateway%20Local.postman_environment.json). Enter them and that's all that's required to gain access. Simply enter these credentials and click **`Authorize`** to gain access.
+When you run the application, the Swagger UI will open, allowing you to interact with the API for processing and retrieving payments. Use the **`Authorize`** button to obtain the necessary API token. The required username and password are provided in [this Postman Environment file](./src/PaymentGateway.Api/Postman/PaymentGateway%20Local.postman_environment.json). Enter them and that's all that's required to gain access. Simply enter these credentials and click **`Authorize`** to gain access.
 
 Once authorised, you can use the Swagger interface to make POST and GET requests to the payment endpoints.
 
@@ -223,7 +223,7 @@ The design and implementation of the PaymentGateway solution is based on a numbe
   - The `merchantId` is derived from the API token (or API key) provided with each request. This token contains a claim (e.g. `merchant_id`) that identifies the merchant.
 
 - **Persistence:**  
-  - No external database is required for this demonstration. Instead, an in-memory cache (IMemoryCache) is used to store payment data.
+  - No external database is required for this demonstration. Instead, an in-memory cache is used to store payment data.
   - This assumption simplifies the architecture for a take-home task, though a production system would use a persistent storage solution.
 
 - **Design Approach (DDD):**  
@@ -247,19 +247,22 @@ The design and implementation of the PaymentGateway solution is based on a numbe
 While the PaymentGateway solution fulfils the requirements for this take-home task, there are several areas for improvement if transitioning to a production-ready system:
 
 - **Persistence:**  
-  Currently, the application uses an in-memory store (IMemoryCache) for storing payment data. In a production environment, this should be replaced with a robust datastore. A database might be appropriate for scalability and flexibility, or a relational database if transactional integrity is required.
+  Currently, the application uses an in-memory store (`IMemoryCache`) for storing payment data. In a production environment, this should be replaced with a robust datastore. A database might be appropriate for scalability and flexibility, or a relational database if transactional integrity is required.
 
 - **Resilience and Fault Tolerance:**  
-  The current bank service integration is basic and may not handle transient failures well. Implementing resilience patterns—such as retries, circuit breakers, and fallback mechanisms improve the system's ability to cope with slow or failing external services.
+  The current bank service integration is basic and may not handle transient failures well. Implementing resilience patterns—such as retries, circuit breakers, and fallback mechanisms will improve the system's ability to cope with slow or failing external services.
 
 - **Merchant Management:**  
-  The system currently derives the merchant ID from the API token. A more robust approach would be to maintain a pre-defined list of merchants and their details in a secure data store, ensuring proper management and validation of merchant data rather than relying solely on token claims.
+  The system currently derives the merchant ID from the API token. A more robust approach would be to maintain a pre-defined list of merchants and their details in a secure datastore, ensuring proper management and validation of merchant data rather than relying solely on token claims.
+
+- **Duplicate Payment Prevention:**  
+  To avoid accidental duplicate payments, consider utilising idempotency keys supplied by clients to ensure that each payment request is unique. In addition, implement database constraints (for example, a unique hash based on critical payment details) and business logic that checks for identical transactions within a defined time window - the combination will help to prevent duplicate transactions from being processed.
 
 - **Monitoring and Metrics:**  
   Integrating API metrics with tools such as Azure App Insights/Dashboards or with Prometheus (and visualising with Grafana) would enable real-time monitoring of API performance and health, facilitating proactive management and alerting.
 
 - **Logging and Centralised Observability:**  
-  Incorporate structured logging using a framework like Serilog, and connect it to a centralized logging platform. This will enhance observability, making it easier to diagnose issues and monitor system behaviour in production.
+  Incorporate structured logging using a framework like Serilog, and connect it to a centralised logging platform. This will enhance observability, making it easier to diagnose issues and monitor system behaviour in production.
 
 - **Authentication Architecture:**  
   Authentication is currently handled on the same server as the API via OpenIddict, meaning the API and authentication server are located in the same place. In a production scenario, it might be beneficial to separate these concerns into distinct services to improve scalability, security, and maintainability.

@@ -8,9 +8,9 @@ public record PaymentResponseDto(
     [property: JsonPropertyName("last_four_digits")]
     string LastFourCardDigits,
     [property: JsonPropertyName("expiry_month")]
-    int ExpiryMonth,
+    string ExpiryMonth,
     [property: JsonPropertyName("expiry_year")]
-    int ExpiryYear,
+    string ExpiryYear,
     string Currency,
     int Amount
 );

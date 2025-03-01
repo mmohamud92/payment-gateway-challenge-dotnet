@@ -24,8 +24,11 @@ public class ExceptionHandlingMiddleware(RequestDelegate next)
         HttpStatusCode statusCode = HttpStatusCode.InternalServerError;
         string message = "An unexpected error occurred.";
 
-        if (exception is ArgumentException or InvalidCardNumberException or InvalidExpiryDateException
-            or InvalidCvvException)
+        if (exception is ArgumentException
+            or InvalidCardNumberException
+            or InvalidExpiryDateException
+            or InvalidCvvException
+            or PaymentValidationException)
         {
             statusCode = HttpStatusCode.BadRequest;
             message = exception.Message;

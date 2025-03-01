@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json;
 
 using PaymentGateway.Api.E2ETests.Fixtures;
+using PaymentGateway.Api.E2ETests.Helpers;
 using PaymentGateway.Application.DTOs;
 using PaymentGateway.Infrastructure;
 
@@ -23,8 +24,8 @@ public class PaymentFlowE2ETests(EndToEndTestFixture fixture) : IClassFixture<En
         var paymentRequest = new
         {
             CardNumber = "4111111111111111",
-            ExpiryMonth = DateTime.UtcNow.Month,
-            ExpiryYear = DateTime.UtcNow.Year + 1,
+            ExpiryMonth = DateTime.UtcNow.Month.ToString(),
+            ExpiryYear = (DateTime.UtcNow.Year + 1).ToString(),
             Currency = "GBP",
             Amount = 10000,
             Cvv = "123"
@@ -35,8 +36,9 @@ public class PaymentFlowE2ETests(EndToEndTestFixture fixture) : IClassFixture<En
         Assert.Equal(HttpStatusCode.Created, postResponse.StatusCode);
 
         string postResponseJson = await postResponse.Content.ReadAsStringAsync();
+        JsonSerializerOptions options = JsonOptionsCache.Options;
         PaymentResponseDto? createdPayment = JsonSerializer.Deserialize<PaymentResponseDto>(
-            postResponseJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            postResponseJson, options);
         Assert.NotNull(createdPayment);
 
         string? readToken = await GetAccessTokenAsync(Constants.ApiScopes.PaymentReadScope);

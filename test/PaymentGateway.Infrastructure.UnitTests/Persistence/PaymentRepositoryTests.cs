@@ -151,8 +151,8 @@ public class PaymentRepositoryTests
         const int amount = 100000;
         const string currency = "GBP";
         const string cvv = "123";
-        int validMonth = DateTime.UtcNow.Month;
-        int validYear = DateTime.UtcNow.Year + 1;
+        string validMonth = $"{DateTime.UtcNow.Month}";
+        string validYear = $"{DateTime.UtcNow.Year + 1}";
 
         return new Payment(merchantId, validCardNumber, validMonth, validYear, amount, currency, cvv);
     }

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 using PaymentGateway.Application.Commands;
 using PaymentGateway.Application.DTOs;
+using PaymentGateway.Domain.Enums;
 using PaymentGateway.Infrastructure;
 
 namespace PaymentGateway.Api.Controllers;
@@ -38,6 +39,17 @@ public class PaymentsWriteController(IMediator mediator) : Controller
 
         ProcessPaymentCommand command = new(requestDto, merchantId);
         PaymentResponseDto response = await mediator.Send(command);
+
+        if (response.Status.Equals(PaymentStatus.Declined.ToString(), StringComparison.OrdinalIgnoreCase))
+        {
+            return StatusCode(402, new { ReasonCode = "DECLINE" });
+        }
+
+        if (response.Status.Equals(PaymentStatus.Rejected.ToString(), StringComparison.OrdinalIgnoreCase))
+        {
+            return BadRequest();
+        }
+
         return CreatedAtAction(nameof(ProcessPayment), new { paymentId = response.Id }, response);
     }
 }

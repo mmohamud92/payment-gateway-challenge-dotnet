@@ -1,4 +1,5 @@
 using PaymentGateway.Domain.Enums;
+using PaymentGateway.Domain.Exceptions;
 
 namespace PaymentGateway.Domain.Entities;
 
@@ -17,12 +18,12 @@ public class Denomination
     {
         if (amount < 0)
         {
-            throw new ArgumentException("Amount cannot be negative.", nameof(amount));
+            throw new PaymentValidationException("Amount cannot be negative.");
         }
 
         if (!TryGetCurrency(currencyCode, out Currency parsedCurrency))
         {
-            throw new ArgumentException($"Invalid currency code: {currencyCode}", nameof(currencyCode));
+            throw new PaymentValidationException($"Invalid currency code: {currencyCode}");
         }
 
         Amount = amount;

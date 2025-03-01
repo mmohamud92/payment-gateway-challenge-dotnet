@@ -23,10 +23,10 @@ public class SecurityRequirementsOperationFilter(IOptions<AuthorizationOptions> 
         List<string> requiredScopes = requiredPolicies
             .Select(policyName => _authOptions?.GetPolicy(policyName!))
             .Where(policy => policy != null)
-            .SelectMany(policy => policy.Requirements)
+            .SelectMany(policy => policy!.Requirements)
             .OfType<ClaimsAuthorizationRequirement>()
             .Where(req => req.ClaimType == "scope")
-            .SelectMany(req => req.AllowedValues)
+            .SelectMany(req => req.AllowedValues!)
             .Distinct()
             .ToList();
 
